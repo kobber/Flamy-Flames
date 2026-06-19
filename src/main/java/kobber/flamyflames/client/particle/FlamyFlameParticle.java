@@ -1,9 +1,12 @@
 package kobber.flamyflames.client.particle;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.FlameParticle;
 import net.minecraft.client.particle.SpriteSet;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
 
 public class FlamyFlameParticle extends FlameParticle {
     private final SpriteSet sprites;
@@ -27,6 +30,14 @@ public class FlamyFlameParticle extends FlameParticle {
     public void tick() {
         super.tick();
         this.setSpriteFromAge(sprites);
+    }
+
+    // Fixes Sodium ignoring getFacingCameraMode
+    @Override
+    public void render(@NotNull VertexConsumer buffer, @NotNull Camera renderInfo, float partialTicks) {
+        Quaternionf quaternionf = new Quaternionf();
+        this.getFacingCameraMode().setRotation(quaternionf, renderInfo, partialTicks);
+        this.renderRotatedQuad(buffer, renderInfo, quaternionf, partialTicks);
     }
 
     @Override
